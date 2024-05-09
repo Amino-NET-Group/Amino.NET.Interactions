@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Amino.Interactions.Attributes
 {
-    public class PermissionGroup
+    public class PermissionGroup : Attribute
     {
         public enum PermissionGroups
         {
-            All,
-            Chat_Staff,
-            Staff,
-            Curator,
-            Leader,
-            Agent
+            All = 0,
+            Chat_Staff = 1,
+            Staff = 2,
+            Curator = 3,
+            Leader = 4,
+            Agent = 5
         }
 
         public PermissionGroups RequiredPermission { get; set; } = PermissionGroups.All;

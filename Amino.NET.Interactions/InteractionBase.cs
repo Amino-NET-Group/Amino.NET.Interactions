@@ -10,6 +10,6 @@ namespace Amino.Interactions
     {
         public Objects.Interaction Context;
 
-
+        
     }
 }
