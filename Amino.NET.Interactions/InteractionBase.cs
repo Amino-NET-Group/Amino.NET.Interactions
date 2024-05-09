@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Amino.Interactions.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,12 @@ namespace Amino.Interactions
 {
     public class InteractionBase
     {
-        public Objects.Interaction Context;
 
-        
+
+        public Task Respond(Interaction context, string message, bool asReply)
+        {
+            return Task.CompletedTask;
+        }
+
     }
 }
