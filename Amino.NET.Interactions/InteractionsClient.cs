@@ -28,7 +28,7 @@ namespace Amino.Interactions
         }
 
         private Amino.Client AminoClient;
-        public int InteractionCooldown = 2000;
+        public int InteractionCooldown { get; } = 2000;
         public string InteractionPrefix = "/";
         
         public bool IgnoreSelf = true;
@@ -59,7 +59,6 @@ namespace Amino.Interactions
 
         private void HandleMessageSocket(Amino.Objects.Message message)
         {
-            Console.WriteLine(message.content);
             if (message.content.StartsWith(InteractionPrefix))
             {
                 if (InteractionModules.ContainsKey(message.content.Substring(InteractionPrefix.Length).Split(" ")[0]))
