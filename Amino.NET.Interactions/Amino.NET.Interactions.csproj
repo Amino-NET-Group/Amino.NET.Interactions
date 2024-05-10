@@ -4,10 +4,41 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <Authors>FabioTheeFox</Authors>
+	  <Company>FabiDev</Company>
+	  <Description>A simple framework for Amino chatbots built on Amino.NET</Description>
+	  <PackageId>Amino.NET.Interactions</PackageId>
+	  <Title>Amino.NET.Interactions</Title>
+	  <Version>1.0.0</Version>
+	  <Product>Amino.NET.Interactions</Product>
+	  <Copyright>FabioTheFox</Copyright>
+	  <PackageIcon>Amino.Net-Logo-V2.png</PackageIcon>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <RepositoryUrl>https://github.com/Amino-NET-Group/Amino.NET.Interactions</RepositoryUrl>
+	  <RepositoryType>GIT</RepositoryType>
+	  <PackageTags>Amino, Aminoapps, Amino.NET, rest, api, framework, Amino.NET.Interactions, Interactions</PackageTags>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	  <IncludeSymbols>False</IncludeSymbols>
+	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Amino.NET" Version="1.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Media\Amino.Net-Logo-V2.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
