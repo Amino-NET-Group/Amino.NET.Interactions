@@ -1,7 +1,7 @@
 # Amino.NET.Interactions
 The official Amino.NET Framework made for chatbots!
 # What is this framework about?
-Making chatbots on Amino has always ben quite a hassle, with the Amino.NET.Interactions framework this has never been easier!
+Making chatbots on Amino has always been quite a hassle, with the Amino.NET.Interactions framework this has never been easier!
 
 ## Extras & Credits
 - This C# library is based on [Amino.NET](https://github.com/Amino-NET-Group/Amino.NET) and will therefore include it as a dependency, in case anything on this Library breaks consider updating Amino.NET to the latest stable (or dev) version, if this does not fix your issue, open an issue on github and or [join our community Discord Server](https://discord.gg/qyv8P2gegK)
