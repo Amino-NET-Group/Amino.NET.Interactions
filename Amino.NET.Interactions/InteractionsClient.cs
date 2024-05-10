@@ -59,6 +59,7 @@ namespace Amino.Interactions
 
         private void HandleMessageSocket(Amino.Objects.Message message)
         {
+            if(message.Author.userId == this.AminoClient.userID && IgnoreSelf) { return; }
             if (message.content.StartsWith(InteractionPrefix))
             {
                 if (InteractionModules.ContainsKey(message.content.Substring(InteractionPrefix.Length).Split(" ")[0]))
