@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Amino.Interactions.Attributes
 {
+    /// <summary>
+    /// With this Attribute you can determine what permission level is required in order for a user to be able to use your module
+    /// </summary>
+    /// <remarks>Note: Using this attribute will not have any effect on your program as it is not fully implemented yet. You can still have it and update your project dependencies later for this take effect.</remarks>
     public class PermissionGroup : Attribute
     {
         public enum PermissionGroups

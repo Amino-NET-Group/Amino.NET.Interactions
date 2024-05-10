@@ -10,36 +10,87 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
+using static System.Net.WebRequestMethods;
 
 namespace Amino.Interactions
 {
     public partial class InteractionsClient
     {
 
+        /// <summary>
+        /// A Dictionary of all currently registered Modules, stored as: commandName:InteactionModule
+        /// </summary>
         public Dictionary<string, Objects.InteractionModule> InteractionModules;
+        /// <summary>
+        /// A Queue for all currently Queued up interactions, this is only useful if <see cref="AutoHandleInteractions"/> is checked
+        /// </summary>
         public Queue<Objects.Interaction> InteractionQueue;
 
+        /// <summary>
+        /// An enum type of all LogLevels you can choose for you InteractionsClient
+        /// </summary>
         public enum LogLevels
         {
+            /// <summary>
+            /// Indicates that no Logging is being done
+            /// </summary>
             None = 0,
+            /// <summary>
+            /// Indicates that you want to receive all log events
+            /// </summary>
             Debug = 1,
+            /// <summary>
+            /// Indicates that you want to receive only Warnings
+            /// </summary>
             Warning = 2,
+            /// <summary>
+            /// Indicates that you want to receive only Errors
+            /// </summary>
             Error = 3
         }
 
         private Amino.Client AminoClient;
+
+        /// <summary>
+        /// The cooldown for your <see cref="InteractionQueue"/>, only useful if <see cref="AutoHandleInteractions"/> is checked
+        /// </summary>
+        /// <remarks>Note: You can currently not edit the property as the Automatic interaction queue is not implemented</remarks>
         public int InteractionCooldown { get; } = 2000;
+        /// <summary>
+        /// This sets the Prefix for your commands, default is /
+        /// </summary>
         public string InteractionPrefix = "/";
         
+        /// <summary>
+        /// This determines if the InteractionsClient should ignore its own interactions, default is true
+        /// </summary>
         public bool IgnoreSelf = true;
+
+        /// <summary>
+        /// The LogLevel you set for the <see cref="Log"/> event
+        /// </summary>
         public LogLevels LogLevel = LogLevels.None;
+
+        /// <summary>
+        /// This determines if your Interactions should be automatically handled, the default is false
+        /// </summary>
+        /// <remarks>Note: You can currently not edit the property as the Automatic interaction queue is not implemented</remarks>
         public bool AutoHandleInteractions { get; } = false;
 
-
+        /// <summary>
+        /// The event that fires when an Interaction is detected
+        /// </summary>
         public event Action<Interaction> InteractionCreated;
+        /// <summary>
+        /// The event that fires when a Log is created
+        /// </summary>
         public event Action<LogMessage> Log;
 
 
+        /// <summary>
+        /// The contructor of your InteractionsClient
+        /// </summary>
+        /// <param name="client">Your <see cref="Amino.Client"/> you want to use for this InteractionsClient, note that you should not turn off the websocket and that you must be logged in</param>
         public InteractionsClient(Amino.Client client)
         {
             this.AminoClient = client;
@@ -81,7 +132,10 @@ namespace Amino.Interactions
             }
         }
 
-
+        /// <summary>
+        /// This function registers a single module into <see cref="InteractionModules"/>
+        /// </summary>
+        /// <typeparam name="T">Any Class / Module that has a valid structure, see <seealso href="https://github.com/Amino-NET-Group/Amino.NET.Interactions"/> to see how it works</typeparam>
         public Task RegisterModule<T>() where T : InteractionBase
         {
             Type moduleType = typeof(T);
@@ -135,7 +189,10 @@ namespace Amino.Interactions
         }
 
 
-
+        /// <summary>
+        /// Registers all valid Modules of a given <see cref="Assembly"/>
+        /// </summary>
+        /// <param name="entrypoint">The Assembly you are passing in</param>
         public Task RegisterModules(Assembly entrypoint)
         {
             var moduleTypes = entrypoint.GetTypes().Where(t => typeof(InteractionBase).IsAssignableFrom(t) && !t.IsAbstract);
@@ -197,6 +254,10 @@ namespace Amino.Interactions
             return Task.CompletedTask;
         }
         
+        /// <summary>
+        /// A function that allows you to redirect an <see cref="Interaction"/> to its corresponding module
+        /// </summary>
+        /// <param name="interactionContext">The Interaction you pass in as Context</param>
         public void HandleInteraction(Objects.Interaction interactionContext)
         {
             List<object> args = new List<object>() { interactionContext };

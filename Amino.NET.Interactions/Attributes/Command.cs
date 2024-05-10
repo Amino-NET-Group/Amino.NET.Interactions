@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Amino.Interactions.Attributes
 {
+    /// <summary>
+    /// This Attribute defines a Module to be a command
+    /// </summary>
     public class Command : Attribute
     {
         public string CommandName { get; }
