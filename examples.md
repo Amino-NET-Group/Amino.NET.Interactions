@@ -20,7 +20,7 @@ public async Task ReportCommand(Interaction context, string user, string[] reaso
 }
 ```
 
-## Utility command that only works in a spcific community
+## Utility command that only works in a specific community
 ```cs
 [Command("utility", "Some utility command", 123456)] // 123456 in this case is the communityId
 public async Task CommunityCommand(Interaction context)
