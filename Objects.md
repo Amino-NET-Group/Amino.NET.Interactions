@@ -47,6 +47,8 @@ Note that some Parameters have default values, they will be displayed _like this
 | ModuleCommandCommunity | int? | The community ID you have locked your command module to |
 | ModuleInteractionBase | [InteractionBase](#interactionbase-functions) | The base interaction class of this Module |
 | ModuleCommandEnabledInDms | bool | The value that decides if your module is available in DMs | true
+| ModuleCommandEnabledInGCs | bool | The value that decides if your module is availabe in group chats | true
+| ModuleCommandEnabledInPCs | bool | The value that decides if your module is availabe in public chats | true
 | ModulePermissionGroup | PermissionGroups | The required user Permission to use this command module | PermissionGroups.All
 | ModuleCommandParameters | List<(string, bool)> | A List of Parameters of this module, string is for parameter Type and bool decides if the parameter is optional or not | new List<(string, bool)>
 | ModuleInteractionMethod | InteractionMethodDelegate | The function linked to this module

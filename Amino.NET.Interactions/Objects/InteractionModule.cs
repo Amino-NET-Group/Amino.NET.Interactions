@@ -16,6 +16,8 @@ namespace Amino.Interactions.Objects
 
         public bool ModuleCommandEnabledInDms { get; set; } = true;
         public PermissionGroup.PermissionGroups ModulePermissionGroup { get; set; } = PermissionGroup.PermissionGroups.All;
+        public bool ModuleCommandEnabledInGCs { get; set; } = true;
+        public bool ModuleCommandEnabledInPCs { get; set; } = true;
 
         public List<(string, bool)> ModuleCommandParameters { get; set; } = new List<(string, bool)>();
 

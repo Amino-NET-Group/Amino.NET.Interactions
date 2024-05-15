@@ -26,6 +26,9 @@ namespace Amino.Interactions
         /// </summary>
         public Queue<Objects.Interaction> InteractionQueue;
 
+        public Dictionary<string, ChatCache> InteractionChatCache = new Dictionary<string, ChatCache>();
+        public Dictionary<string, UserCache> InteractionUserCache = new Dictionary<string, UserCache>();
+
         /// <summary>
         /// An enum type of all LogLevels you can choose for you InteractionsClient
         /// </summary>
@@ -77,6 +80,9 @@ namespace Amino.Interactions
         /// <remarks>Note: You can currently not edit the property as the Automatic interaction queue is not implemented</remarks>
         public bool AutoHandleInteractions { get; } = false;
 
+        public bool AutoCacheChats { get; } = false;
+        public bool AutoCacheUsers { get; } = false;
+
         /// <summary>
         /// The event that fires when an Interaction is detected
         /// </summary>
@@ -125,7 +131,7 @@ namespace Amino.Interactions
                     context.InteractionName = module.ModuleCommandName;
                     context.InteractionTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     context.InteractionBaseModule = module;
-
+                    
                     if(this.InteractionCreated != null) { this.InteractionCreated.Invoke(context); }
 
                 }
@@ -148,13 +154,18 @@ namespace Amino.Interactions
                 var commandAttribute = method.GetCustomAttribute<Command>();
                 var enabledInDmsAttribute = method.GetCustomAttribute<EnabledInDms>();
                 var permissionGroup = method.GetCustomAttribute<PermissionGroup>();
+                var enabledInGCsAttribute = method.GetCustomAttribute<EnabledInGroupChats>();
+                var enabledInPCsAttribute = method.GetCustomAttribute<EnabledInPublicChats>();
                 var parameters = new FunctionAnalyzer().GetParameters(method);
+                
 
                 InteractionModule module = new InteractionModule();
                 module.ModuleCommandName = commandAttribute.CommandName;
                 if (commandAttribute.CommunityId != null) { module.ModuleCommandCommunity = Convert.ToInt32(commandAttribute.CommunityId); }
                 if (commandAttribute.CommandDescription != null) { module.ModuleCommandDescription = commandAttribute.CommandDescription; }
                 if (enabledInDmsAttribute != null) { module.ModuleCommandEnabledInDms = enabledInDmsAttribute.IsEnabledInDms; }
+                if(enabledInGCsAttribute != null) { module.ModuleCommandEnabledInGCs = enabledInGCsAttribute.IsEnabledInGCs; }
+                if(enabledInPCsAttribute != null) { module.ModuleCommandEnabledInPCs = enabledInPCsAttribute.isEnabledInPCs; }
                 if (permissionGroup != null) { module.ModulePermissionGroup = permissionGroup.RequiredPermission; }
 
                 foreach (var parameter in parameters)
@@ -206,6 +217,9 @@ namespace Amino.Interactions
                 {
                     var commandAttribute = method.GetCustomAttribute<Command>();
                     var enabledInDmsAttribute = method.GetCustomAttribute<EnabledInDms>();
+                    var enabledInGCsAttribute = method.GetCustomAttribute<EnabledInGroupChats>();
+                    var enabledInPCsAttribute = method.GetCustomAttribute<EnabledInPublicChats>();
+
                     var permissionGroup = method.GetCustomAttribute<PermissionGroup>();
                     var parameters = new FunctionAnalyzer().GetParameters(method);
 
@@ -214,6 +228,8 @@ namespace Amino.Interactions
                     if(commandAttribute.CommunityId != null) { module.ModuleCommandCommunity = Convert.ToInt32(commandAttribute.CommunityId); }
                     if(commandAttribute.CommandDescription != null) { module.ModuleCommandDescription = commandAttribute.CommandDescription; }
                     if(enabledInDmsAttribute != null) { module.ModuleCommandEnabledInDms = enabledInDmsAttribute.IsEnabledInDms; }
+                    if(enabledInGCsAttribute != null) { module.ModuleCommandEnabledInGCs = enabledInGCsAttribute.IsEnabledInGCs; }
+                    if(enabledInPCsAttribute != null) { module.ModuleCommandEnabledInPCs = enabledInPCsAttribute.isEnabledInPCs; }
                     if(permissionGroup != null) { module.ModulePermissionGroup = permissionGroup.RequiredPermission; }
 
                     foreach(var parameter in parameters)
@@ -261,8 +277,31 @@ namespace Amino.Interactions
         public void HandleInteraction(Objects.Interaction interactionContext)
         {
             List<object> args = new List<object>() { interactionContext };
+            SubClient sub = new Amino.SubClient(interactionContext.AminoClient, interactionContext.Message.communityId.ToString());
+            if (AutoCacheChats)
+            {
+                if(!InteractionChatCache.ContainsKey(interactionContext.Message.chatId))
+                {
+                    
+                }
 
-            for(int i = 1; i < interactionContext.InteractionBaseModule.ModuleCommandParameters.Count; i++)
+            }
+            if(AutoCacheUsers)
+            {
+                if(!InteractionUserCache.ContainsKey(interactionContext.Message.Author.userId))
+                {
+                    var user = sub.get_user_info(interactionContext.Message.Author.userId);
+                    UserCache _cache = new UserCache();
+                    _cache.UserId = interactionContext.Message.Author.userId;
+                    
+                }
+
+            }
+            ChatCache targetChat = null;
+            UserCache targetUser = null;
+
+
+            for (int i = 1; i < interactionContext.InteractionBaseModule.ModuleCommandParameters.Count; i++)
             {
                 if (i > interactionContext.InteractionParameters.Count) { break; }
                 var interactionParameter = interactionContext.InteractionParameters[i - 1];
