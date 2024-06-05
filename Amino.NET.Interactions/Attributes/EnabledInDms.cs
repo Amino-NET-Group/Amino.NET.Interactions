@@ -12,8 +12,15 @@ namespace Amino.Interactions.Attributes
     /// <remarks>Note: Using this attribute will not have any effect on your program as it is not fully implemented yet. You can still have it and update your project dependencies later for this take effect.</remarks>
     public class EnabledInDms : Attribute
     {
+        /// <summary>
+        /// Determines if the command is availabe in DM chats
+        /// </summary>
         public bool IsEnabledInDms { get; } = true;
 
+        /// <summary>
+        /// The Attribute to register your command as a module
+        /// </summary>
+        /// <param name="isEnabledInDms">Determines if the command will be availabe for DM chats</param>
         public EnabledInDms(bool isEnabledInDms)
         {
             IsEnabledInDms = isEnabledInDms;

@@ -8,8 +8,14 @@ namespace Amino.Interactions.Objects
 {
     public class ChatCache
     {
+        public enum ChatTypes
+        {
+            PublicChat,
+            PrivateChat,
+            GroupChat
+        }
 
         public string ChatId { get; set; }
-        public int ChatType { get; set; }
+        public ChatTypes ChatType { get; set; }
     }
 }

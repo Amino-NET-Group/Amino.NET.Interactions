@@ -10,7 +10,6 @@ namespace Amino.Interactions.Objects
     public class UserCache
     {
         public string UserId { get; set; }
-        public PermissionGroup.PermissionGroups PermissionLevel { get; set; } = PermissionGroup.PermissionGroups.All;
-        public PermissionGroup.PermissionGroups AdditionalPermissionLevel { get; set; } = PermissionGroup.PermissionGroups.All;
+        public List<PermissionGroup.PermissionGroups> Permissions { get; set; } = new List<PermissionGroup.PermissionGroups>() { PermissionGroup.PermissionGroups.All };
     }
 }

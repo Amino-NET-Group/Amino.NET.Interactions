@@ -26,7 +26,13 @@ namespace Amino.Interactions
         /// </summary>
         public Queue<Objects.Interaction> InteractionQueue;
 
+        /// <summary>
+        /// The cache Dictionary for Chats, you can use this to get and modify the current cache, it has the following format: <b>ChatId:<see cref="ChatCache"/></b>
+        /// </summary>
         public Dictionary<string, ChatCache> InteractionChatCache = new Dictionary<string, ChatCache>();
+        /// <summary>
+        /// The cache Dictionary for Users and permissions, you can use this to get and modify the current cache, it has the following format: <b>UserId:<see cref="UserCache"/></b>
+        /// </summary>
         public Dictionary<string, UserCache> InteractionUserCache = new Dictionary<string, UserCache>();
 
         /// <summary>
@@ -80,13 +86,24 @@ namespace Amino.Interactions
         /// <remarks>Note: You can currently not edit the property as the Automatic interaction queue is not implemented</remarks>
         public bool AutoHandleInteractions { get; } = false;
 
+        /// <summary>
+        /// This determines if your Chats should automatically be cached, beware that this comes at the cost of API calls which can lead to a potential rate limit
+        /// </summary>
         public bool AutoCacheChats { get; } = false;
+        /// <summary>
+        /// This determines if your Users should automatically be cached, beware that this comes at the cost of API calls which can lead to a potential rate limit
+        /// </summary>
         public bool AutoCacheUsers { get; } = false;
 
         /// <summary>
         /// The event that fires when an Interaction is detected
         /// </summary>
         public event Action<Interaction> InteractionCreated;
+
+        /// <summary>
+        /// This event fires each time an interaction cannot be completed due to missing Cache
+        /// </summary>
+        public event Action<Interaction> InteractionInvalidCache;
         /// <summary>
         /// The event that fires when a Log is created
         /// </summary>
@@ -106,7 +123,7 @@ namespace Amino.Interactions
             if(AutoHandleInteractions)
             {
                 this.InteractionQueue = new Queue<Objects.Interaction>();
-                _ = Task.Run(async () => { HandleInteractionQueue(); });
+                _ = Task.Run(async () => { await HandleInteractionQueue(); });
             }
             
             AminoClient.onMessage += HandleMessageSocket;
@@ -116,16 +133,16 @@ namespace Amino.Interactions
 
         private void HandleMessageSocket(Amino.Objects.Message message)
         {
-            if(message.Author.userId == this.AminoClient.userID && IgnoreSelf) { return; }
-            if (message.content.StartsWith(InteractionPrefix))
+            if(message.Author.UserId == this.AminoClient.UserId && IgnoreSelf) { return; }
+            if (message.Content.StartsWith(InteractionPrefix))
             {
-                if (InteractionModules.ContainsKey(message.content.Substring(InteractionPrefix.Length).Split(" ")[0]))
+                if (InteractionModules.ContainsKey(message.Content.Substring(InteractionPrefix.Length).Split(" ")[0]))
                 {
-                    InteractionModule module = InteractionModules[message.content.Substring(InteractionPrefix.Length).Split(" ")[0]];
+                    InteractionModule module = InteractionModules[message.Content.Substring(InteractionPrefix.Length).Split(" ")[0]];
                     Interaction context = new Interaction();
                     context.Message = message;
-                    context.InteractionParameters.AddRange(message.content.Split(" ")[1..]);
-                    context.InteractionChatId = message.chatId;
+                    context.InteractionParameters.AddRange(message.Content.Split(" ")[1..]);
+                    context.InteractionChatId = message.ChatId;
                     context.AminoClient = this.AminoClient;
                     context.InteractionId = Guid.NewGuid().ToString();
                     context.InteractionName = module.ModuleCommandName;
@@ -277,26 +294,38 @@ namespace Amino.Interactions
         public void HandleInteraction(Objects.Interaction interactionContext)
         {
             List<object> args = new List<object>() { interactionContext };
-            SubClient sub = new Amino.SubClient(interactionContext.AminoClient, interactionContext.Message.communityId.ToString());
-            if (AutoCacheChats)
-            {
-                if(!InteractionChatCache.ContainsKey(interactionContext.Message.chatId))
-                {
-                    
-                }
+            SubClient sub = new Amino.SubClient(interactionContext.AminoClient, interactionContext.Message.SocketBase.CommunityId.ToString());
 
-            }
-            if(AutoCacheUsers)
+            if(!interactionContext.InteractionBaseModule.ModuleCommandEnabledInPCs || !interactionContext.InteractionBaseModule.ModuleCommandEnabledInGCs || !interactionContext.InteractionBaseModule.ModuleCommandEnabledInDms)
             {
-                if(!InteractionUserCache.ContainsKey(interactionContext.Message.Author.userId))
+                if (!InteractionChatCache.ContainsKey(interactionContext.Message.ChatId))
                 {
-                    var user = sub.get_user_info(interactionContext.Message.Author.userId);
-                    UserCache _cache = new UserCache();
-                    _cache.UserId = interactionContext.Message.Author.userId;
-                    
+                    if (AutoCacheChats)
+                    {
+                        
+                    } else
+                    {
+                        // Fire invalid cache event
+                    }
                 }
-
             }
+
+            if(interactionContext.InteractionBaseModule.ModulePermissionGroup != PermissionGroup.PermissionGroups.All)
+            {
+                if (!InteractionUserCache.ContainsKey(interactionContext.Message.Author.UserId))
+                {
+
+
+                    if (AutoCacheUsers)
+                    {
+                        var user = sub.get_user_info(interactionContext.Message.Author.UserId);
+                        UserCache _cache = new UserCache();
+                        _cache.UserId = interactionContext.Message.Author.UserId;
+                        // Handle getting user permission types
+                    }
+                }
+            }
+
             ChatCache targetChat = null;
             UserCache targetUser = null;
 
